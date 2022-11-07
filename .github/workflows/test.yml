@@ -1,0 +1,40 @@
+name: 'build-test'
+on: # rebuild any PRs and main branch changes
+  pull_request:
+  push:
+    branches:
+      - main
+      - 'releases/*'
+
+jobs:
+  build: # make sure build/ci work properly
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          depth: 1
+      - run: |
+          npm install
+      - run: |
+          npm run all
+
+  test: # make sure the action works on a clean machine without building
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          depth: 1
+
+      - uses: ./
+        id: secretize
+        name: 'secretize test'
+        with:
+          string: 'app_name'
+
+      - name: 'result'
+        if: steps.secretize.outpus.return == 'APP_NAME'
+        run: exit 0
+
+      - name: 'result'
+        if: steps.secretize.outpus.return != 'APP_NAME'
+        run: exit 1

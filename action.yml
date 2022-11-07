@@ -1,0 +1,10 @@
+name: 'secretize'
+description: 'convert app_name to APP_NAME'
+author: 'rhiokim'
+inputs:
+  string:
+    required: true
+    description: 'any string'
+runs:
+  using: 'node16'
+  main: 'dist/index.js'
